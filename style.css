@@ -1,0 +1,207 @@
+.prompt-regular {
+    font-family: "Prompt", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+  }
+
+
+/* ตั้งค่าพื้นฐานสำหรับทุกส่วน */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Prompt', sans-serif;
+}
+
+/* การตั้งค่าพื้นหลัง */
+body {
+    display: flex;
+    background-color: #e3faff;
+}
+
+/* การจัดรูปแบบของ Sidebar */
+.sidebar {
+    width: 230px;
+    background-color: #F4B3D0;
+    color: #410039;
+    font-size: 20px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 87vh;
+    position: fixed;
+    top: 2%;
+    left: 1%;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* การจัดรูปแบบโลโก้และโปรไฟล์ใน Sidebar */
+.logo {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.logo img.profile-image {
+    width: 50px;
+    border-radius: 50%;
+    margin-bottom: 10px;
+}
+
+/* การจัดรูปแบบเมนูใน Sidebar */
+.menu {
+    width: 100%;
+}
+
+.menu-item {
+    display: block;
+    color: #404142;
+    font-size: 16px;
+    text-decoration: none;
+    padding: 10px;
+    text-align: center;
+    margin-top: 10px;
+    border-radius: 8px;
+}
+
+.menu-item.active, .menu-item:hover {
+    background-color: #e0e0e0;
+}
+
+/* การจัดรูปแบบเนื้อหาหลัก (Main content) */
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    margin-left: 250px;
+}
+
+/* การจัดรูปแบบเนื้อหาใน หน้าหลัก*/
+.home{
+    margin-top: 20px;
+}
+
+.home h1 {
+    font-size: 30px;
+    color: #08005e;
+}
+
+/* การจัดรูปแบบเนื้อหาในแผงซ้ายและขวา */
+.home-content {
+    display: flex;
+    margin-top: 20px;
+}
+
+.left-panel, .right-panel {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    width: 50%;
+    margin-right: 10px;
+}
+
+.right-panel {
+    margin-left: 10px;
+}
+
+/* การจัดรูปแบบหัวข้อในแผงซ้ายและขวา */
+.left-panel h2, .right-panel h2 {
+    font-size: 18px;
+    color: #333;
+    margin-bottom: 15px;
+}
+
+/* การจัดรูปแบบปุ่ม */
+.btn {
+    display: inline-block;
+    padding: 8px 15px;
+    margin-top: 10px;
+    border: none;
+    border-radius: 4px;
+    background-color: #007bff;
+    color: #fff;
+    cursor: pointer;
+}
+
+.upload-btn {
+    background-color: #28a745;
+}
+
+/* กรุณาเลือกเมนูด้านล่าง */
+.built-using {
+    font-size: 12px;
+    color: #777;
+    margin-top: 10px;
+}
+
+footer {
+    background-color: #333; /* สีพื้นหลัง */
+    color: #fff; /* สีข้อความ */
+    text-align: center; /* จัดข้อความให้อยู่กลาง */
+    padding: 10px; /* เพิ่มระยะห่างรอบ ๆ */
+    position: relative; /* ทำให้ footer ไม่อยู่ติดกับเนื้อหาด้านบน */
+}
+
+/* สีสำหรับผลลัพธ์แต่ละ label */
+.label-atrophy {
+    background-color: #f8d7da;
+    color: #721c24;
+    padding: 3px 10px;
+    border-radius: 5px;
+    font-weight: bold;
+    display: inline-block;
+    margin-top: 5px;
+}
+
+.label-broken {
+    background-color: #fff3cd;
+    color: #856404;
+    padding: 3px 10px;
+    border-radius: 5px;
+    font-weight: bold;
+    display: inline-block;
+    margin-top: 5px;
+}
+
+.label-good {
+    background-color: #d4edda;
+    color: #155724;
+    padding: 3px 10px;
+    border-radius: 5px;
+    font-weight: bold;
+    display: inline-block;
+    margin-top: 5px;
+}
+
+.label-moldy {
+    background-color: #d1ecf1;
+    color: #0c5460;
+    padding: 3px 10px;
+    border-radius: 5px;
+    font-weight: bold;
+    display: inline-block;
+    margin-top: 5px;
+}
+
+.label-peeling {
+    background-color: #e2e3e5;
+    color: #383d41;
+    padding: 3px 10px;
+    border-radius: 5px;
+    font-weight: bold;
+    display: inline-block;
+    margin-top: 5px;
+}
+
+.label-spot {
+    background-color: #f5c6cb;
+    color: #721c24;
+    padding: 3px 10px;
+    border-radius: 5px;
+    font-weight: bold;
+    display: inline-block;
+    margin-top: 5px;
+}

@@ -1,11 +1,181 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    
-</body>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Home</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Prompt&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+    <style>
+      body {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+        margin: 0;
+      }
+
+      .main-content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        padding: 20px;
+        margin-left: 250px;
+      }
+
+      footer {
+        background-color: #f4b3d0;
+        color: #fff;
+        text-align: center;
+        padding: 5px;
+      }
+
+      .result-display {
+        margin-top: 20px;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+      }
+
+      .uploaded-image {
+        max-width: 100%;
+        height: auto;
+        margin-top: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <aside class="sidebar">
+      <div class="logo">
+        <img
+          src="profile.png"
+          alt="Profile Image"
+          class="profile-image"
+        /><br />
+        <span>Detect Peanuts</span>
+      </div>
+      <div class="menu">
+        <a href="index.html" class="menu-item active">หน้าหลัก</a>
+        <a href="#" class="menu-item active">วิธีการใช้งาน</a>
+        <a href="#" class="menu-item active">การจำแนกประเภท</a>
+        <a href="#" class="menu-item active">เกี่ยวกับเรา</a>
+      </div>
+    </aside>
+
+    <div class="main-content">
+      <div class="home">
+        <h1>
+          Classification of peanuts using image processing and machine learning
+        </h1>
+        <div class="home-content">
+          <div class="left-panel">
+            <h2>กรุณาอัปโหลดภาพถ่าย</h2>
+            <p>Upload any image</p>
+            <input type="file" id="file-upload" accept="image/*" />
+            <button class="btn upload-btn" onclick="uploadFile()">
+              Upload
+            </button>
+            <p class="built-using">กรุณาเลือกเมนูด้านล่างนี้</p>
+            <button class="btn" onclick="changePicture()">
+              Change Picture
+            </button>
+            <button class="btn" onclick="analyzeImage()">Analysis</button>
+          </div>
+
+          <div class="right-panel">
+            <h2>Peanut image detection results (ผลลัพธ์)</h2>
+            <div class="result-display" id="result-display">
+              <p>กรุณาอัปโหลดไฟล์</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer>
+      <p>&copy; 2024 Detect Peanuts. All rights reserved.</p>
+      <p><a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a></p>
+    </footer>
+
+    <script>
+      let currentFile;
+
+      function uploadFile() {
+        const fileInput = document.getElementById("file-upload");
+        const resultDisplay = document.getElementById("result-display");
+
+        if (fileInput.files.length > 0) {
+          currentFile = fileInput.files[0];
+          const fileName = currentFile.name;
+          const reader = new FileReader();
+
+          reader.onload = function (e) {
+            resultDisplay.innerHTML = `
+                        <p>ไฟล์ที่เลือก: ${fileName}</p>
+                        <img src="${e.target.result}" alt="Uploaded Image" class="uploaded-image">
+                    `;
+          };
+
+          reader.readAsDataURL(currentFile);
+        } else {
+          resultDisplay.innerHTML = "<p>กรุณาเลือกไฟล์</p>";
+        }
+      }
+
+      function changePicture() {
+        const fileInput = document.getElementById("file-upload");
+        fileInput.click();
+        fileInput.onchange = function () {
+          uploadFile();
+        };
+      }
+
+      function analyzeImage() {
+        const fileInput = document.getElementById("file-upload");
+        const resultDisplay = document.getElementById("result-display");
+
+        if (fileInput.files.length === 0) {
+          alert("กรุณาอัปโหลดภาพก่อนทำการวิเคราะห์");
+          return;
+        }
+
+        const formData = new FormData();
+        formData.append("file", fileInput.files[0]);
+
+        fetch("/analyze", {
+          method: "POST",
+          body: formData,
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            const labelClass = "label-" + data.label.toLowerCase();
+
+            resultDisplay.innerHTML = `
+            <p><strong>Label:</strong> <span class="${labelClass}">${
+              data.label
+            }</span></p>
+            <p><strong>Confidence:</strong> ${(data.confidence * 100).toFixed(
+              2
+            )}%</p>
+            <img src="${data.image_path}" class="uploaded-image">
+        `;
+          })
+          .catch((error) => {
+            alert("เกิดข้อผิดพลาดในการวิเคราะห์");
+            console.error(error);
+          });
+      }
+    </script>
+  </body>
 </html>
