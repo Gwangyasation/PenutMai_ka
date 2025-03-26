@@ -6,18 +6,9 @@
     <title>Home</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Prompt&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
-      rel="stylesheet"
-    />
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='style.css') }}"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=Prompt&display=swap" rel="stylesheet" />
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
     <style>
       body {
         display: flex;
@@ -53,17 +44,30 @@
         height: auto;
         margin-top: 10px;
       }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+      }
+
+      table th,
+      table td {
+        padding: 8px;
+        border: 1px solid #ccc;
+        text-align: center;
+      }
+
+      table th {
+        background-color: #f2f2f2;
+      }
     </style>
   </head>
   <body>
     <aside class="sidebar">
       <div class="logo">
-        <img
-          src="profile.png"
-          alt="Profile Image"
-          class="profile-image"
-        /><br />
-        <span>Detect Peanuts</span>
+        <img src="{{ url_for('static', filename='profile.png') }}" alt="Profile Image" class="profile-image" /><br />
+        <span>Classification of Peanuts</span>
       </div>
       <div class="menu">
         <a href="index.html" class="menu-item active">หน้าหลัก</a>
@@ -75,22 +79,19 @@
 
     <div class="main-content">
       <div class="home">
-        <h1>
-          Classification of peanuts using image processing and machine learning
-        </h1>
+        <h1>Classification of peanuts using image processing and machine learning</h1>
         <div class="home-content">
           <div class="left-panel">
             <h2>กรุณาอัปโหลดภาพถ่าย</h2>
             <p>Upload any image</p>
             <input type="file" id="file-upload" accept="image/*" />
-            <button class="btn upload-btn" onclick="uploadFile()">
-              Upload
-            </button>
+            <button class="btn upload-btn" onclick="uploadFile()">Upload</button>
             <p class="built-using">กรุณาเลือกเมนูด้านล่างนี้</p>
-            <button class="btn" onclick="changePicture()">
-              Change Picture
-            </button>
+            <button class="btn" onclick="changePicture()">Change Picture</button>
             <button class="btn" onclick="analyzeImage()">Analysis</button>
+
+            <!-- ตารางสำหรับแสดงคลาสอื่น ๆ -->
+            <div id="other-classes-table" style="margin-top: 20px;"></div>
           </div>
 
           <div class="right-panel">
@@ -104,7 +105,7 @@
     </div>
 
     <footer>
-      <p>&copy; 2024 Detect Peanuts. All rights reserved.</p>
+      <p>&copy; 2024 Classification of Peanuts. All rights reserved.</p>
       <p><a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a></p>
     </footer>
 
@@ -122,9 +123,9 @@
 
           reader.onload = function (e) {
             resultDisplay.innerHTML = `
-                        <p>ไฟล์ที่เลือก: ${fileName}</p>
-                        <img src="${e.target.result}" alt="Uploaded Image" class="uploaded-image">
-                    `;
+              <p>ไฟล์ที่เลือก: ${fileName}</p>
+              <img src="${e.target.result}" alt="Uploaded Image" class="uploaded-image">
+            `;
           };
 
           reader.readAsDataURL(currentFile);
@@ -159,17 +160,66 @@
         })
           .then((response) => response.json())
           .then((data) => {
-            const labelClass = "label-" + data.label.toLowerCase();
+            const predictions = data.predictions;
+            let html = "";
 
-            resultDisplay.innerHTML = `
-            <p><strong>Label:</strong> <span class="${labelClass}">${
-              data.label
-            }</span></p>
-            <p><strong>Confidence:</strong> ${(data.confidence * 100).toFixed(
-              2
-            )}%</p>
-            <img src="${data.image_path}" class="uploaded-image">
-        `;
+            if (predictions.length > 0) {
+              // หาคลาสที่มี confidence สูงสุด
+              let topPrediction = predictions[0];
+              for (let i = 1; i < predictions.length; i++) {
+                if (predictions[i].confidence > topPrediction.confidence) {
+                  topPrediction = predictions[i];
+                }
+              }
+
+              const topLabelKey = topPrediction.label.match(/\((.*?)\)/)?.[1]?.toLowerCase();
+              const topLabelClass = topLabelKey ? "label-" + topLabelKey : "label-default";
+
+              html += `
+                <h3>ผลลัพธ์ที่แม่นยำที่สุด</h3>
+                <p><span class="${topLabelClass}">${topPrediction.label}</span>
+                 ${(topPrediction.confidence * 100).toFixed(2)}%</p>
+              `;
+
+              const otherPredictions = predictions
+                .filter((p) => p.label !== topPrediction.label)
+                .sort((a, b) => b.confidence - a.confidence);
+
+              if (otherPredictions.length > 0) {
+                // สร้างตารางสำหรับคลาสอื่น ๆ
+                let tableHtml = `
+                  <h4>ตาราง Confidence ของคลาสอื่น ๆ</h4>
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>ประเภทเมล็ดถั่ว</th>
+                        <th>Confidence (%)</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                `;
+
+                otherPredictions.forEach((item) => {
+                  const labelKey = item.label.match(/\((.*?)\)/)?.[1]?.toLowerCase();
+                  const labelClass = labelKey ? "label-" + labelKey : "label-default";
+
+                  tableHtml += `
+                    <tr>
+                      <td><span class="${labelClass}">${item.label}</span></td>
+                      <td>${(item.confidence * 100).toFixed(2)}%</td>
+                    </tr>
+                  `;
+                });
+
+                tableHtml += `</tbody></table>`;
+                document.getElementById("other-classes-table").innerHTML = tableHtml;
+              }
+            } else {
+              html += "<p>ไม่พบการจำแนกคลาส</p>";
+            }
+
+            html += `<img src="${data.image_path}" class="uploaded-image">`;
+            resultDisplay.innerHTML = html;
           })
           .catch((error) => {
             alert("เกิดข้อผิดพลาดในการวิเคราะห์");
