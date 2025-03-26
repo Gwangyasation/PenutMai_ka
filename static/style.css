@@ -44,8 +44,8 @@ body {
 }
 
 .logo img.profile-image {
-    width: 50px;
-    border-radius: 50%;
+    width: 100px;
+    border-radius: 20%;
     margin-bottom: 10px;
 }
 
@@ -205,3 +205,13 @@ footer {
     display: inline-block;
     margin-top: 5px;
 }
+
+.label-default {
+    background-color: #e0e0e0;
+    color: #333;
+    padding: 3px 10px;
+    border-radius: 5px;
+    font-weight: bold;
+    display: inline-block;
+    margin-top: 5px;
+  }  

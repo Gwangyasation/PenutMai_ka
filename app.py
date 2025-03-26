@@ -12,12 +12,12 @@ model = YOLO("best.pt")
 
 # mapping class index → label name
 custom_labels = {
-    0: "atrophy",
-    1: "broken",
-    2: "good",
-    3: "moldy",
-    4: "peeling",
-    5: "spot"
+    0: "เมล็ดลีบ (atrophy)",
+    1: "เมล็ดแตกหัก (broken)",
+    2: "เมล็ดดี (good)",
+    3: "เมล็ดเชื้อรา (moldy)",
+    4: "เมล็ดเปลือกร่อน (peeling)",
+    5: "เมล็ดจุดด่าง (spot)"
 }
 
 @app.route("/")
@@ -34,23 +34,33 @@ def analyze():
     filepath = os.path.join(UPLOAD_FOLDER, filename)
     file.save(filepath)
 
-    # วิเคราะห์ภาพด้วยโมเดล
     results = model(filepath)
     result = results[0]
 
+    # Mapping index -> label name
+    custom_labels = {
+        0: "เมล็ดลีบ (atrophy)",
+        1: "เมล็ดแตกหัก (broken)",
+        2: "เมล็ดดี (good)",
+        3: "เมล็ดเชื้อรา (moldy)",
+        4: "เมล็ดเปลือกร่อน (peeling)",
+        5: "เมล็ดจุดด่าง (spot)"
+    }
+
+    predictions = []
     if result.probs:
-        label_index = int(result.probs.top1)
-        label_name = custom_labels.get(label_index, f"ไม่รู้จักคลาส {label_index}")
-        confidence = float(result.probs.top1conf)
-    else:
-        label_name = "ไม่สามารถจำแนกได้"
-        confidence = 0.0
+        for idx, conf in enumerate(result.probs.data.tolist()):
+            label = custom_labels.get(idx, f"คลาส {idx}")
+            predictions.append({
+                'label': label,
+                'confidence': round(conf, 4)
+            })
 
     return jsonify({
-        'label': label_name,
-        'confidence': confidence,
+        'predictions': predictions,
         'image_path': f"/uploads/{filename}"
     })
+
 
 @app.route('/uploads/<filename>')
 def uploaded_file(filename):
